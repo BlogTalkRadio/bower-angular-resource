@@ -393,11 +393,21 @@ angular.module('ngResource', ['ng']).
           }
 
           var value = this instanceof Resource ? this : (action.isArray ? [] : new Resource(data));
-          $http({
-            method: action.method,
-            url: route.url(extend({}, extractParams(data, action.params || {}), params)),
-            data: data
-          }).then(function(response) {
+
+
+          var httpConfig = {
+              method: action.method,
+              url: route.url(extend({}, extractParams(data, action.params || {}), params)),
+              data: data
+          };
+
+          forEach(action, function(value, key) {
+              if (key != 'params' && key != 'isArray' && key != 'interceptor' && key != "url" && key != "method") {
+                  httpConfig[key] = copy(value);
+              }
+          });
+
+          $http(httpConfig).then(function(response) {
               var data = response.data;
 
               if (data) {

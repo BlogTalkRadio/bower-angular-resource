@@ -394,11 +394,17 @@ angular.module('ngResource', ['ng']).
 
           var value = this instanceof Resource ? this : (action.isArray ? [] : new Resource(data));
 
+		  var withCredentials = $http.defaults.withCredentials;
+		  
+		  if(action.hasOwnProperty('withCredentials')){
+			withCredentials = action.withCredentials;
+		  }
 
           var httpConfig = {
               method: action.method,
               url: route.url(extend({}, extractParams(data, action.params || {}), params)),
-              data: data
+              data: data,
+			  withCredentials: withCredentials
           };
 
           forEach(action, function(value, key) {
